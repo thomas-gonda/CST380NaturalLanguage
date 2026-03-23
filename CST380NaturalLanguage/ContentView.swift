@@ -31,6 +31,7 @@ struct ContentView: View {
 
             Button("Analyze Text") {
                 analyzeText()
+                tokenizeText()
             }
             .buttonStyle(.borderedProminent)
 
@@ -51,6 +52,15 @@ struct ContentView: View {
                 Locale.current.localizedString(forIdentifier: language.rawValue) ?? language.rawValue
         } else {
             detectedLanguage = "Unable to detect language"
+        }
+    }
+    func tokenizeText() {
+        let tokenizer = NLTokenizer(unit: .word)
+        tokenizer.string = inputText
+        //itterates and prints out the tokenized string
+        tokenizer.enumerateTokens(in: inputText.startIndex..<inputText.endIndex) { tokenRange, _ in
+            print(inputText[tokenRange])
+            return true
         }
     }
 }
