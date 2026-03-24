@@ -11,43 +11,56 @@ import NaturalLanguage
 struct ContentView: View {
     @State private var inputText: String = "No habla español."
     @State private var detectedLanguage: String = ""
+    @State private var tokenizedText: [String] = []
 
     var body: some View {
-        VStack(alignment: .center, spacing: 16) {
-            Text("Natural Language Framework Demo")
-                .font(.largeTitle)
-                .bold()
-
-            Text("Hit Analyze to figure out language of the text.")
-                .font(.subheadline)
-
-            TextEditor(text: $inputText)
-                .frame(height: 200)
-                .padding(10)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 8)
-                        .stroke(Color.gray, lineWidth: 1)
-                )
-
-            Button("Analyze Text") {
-                analyzeText()
-                tokenizeText()
-            }
-            .buttonStyle(.borderedProminent)
-
-            if !detectedLanguage.isEmpty {
-                let parts = detectedLanguage.components(separatedBy: "\n\n")
-                let dominantName = parts.first?.replacingOccurrences(of: "Dominant: ", with: "") ?? ""
-                Text("Detected Language: \(dominantName)")
-                    .font(.headline)
-                Text("Dominant: \(dominantName)")
+        ScrollView {
+            
+            
+            VStack(alignment: .center, spacing: 16) {
+                Text("Natural Language Framework Demo")
+                    .font(.largeTitle)
+                    .bold()
+                
+                Text("Hit Analyze to figure out language of the text.")
                     .font(.subheadline)
-                Text(parts.dropFirst().joined(separator: "\n\n"))
-                    .font(.subheadline)
-                    .multilineTextAlignment(.center)
+                
+                TextEditor(text: $inputText)
+                    .frame(height: 200)
+                    .padding(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(Color.gray, lineWidth: 1)
+                    )
+                
+                Button("Analyze Text") {
+                    analyzeText()
+                    tokenizeText()
+                }
+                .buttonStyle(.borderedProminent)
+                
+                if !detectedLanguage.isEmpty {
+                    let parts = detectedLanguage.components(separatedBy: "\n\n")
+                    let dominantName = parts.first?.replacingOccurrences(of: "Dominant: ", with: "") ?? ""
+                    Text("Detected Language: \(dominantName)")
+                        .font(.headline)
+                    Text("Dominant: \(dominantName)")
+                        .font(.subheadline)
+                    Text(parts.dropFirst().joined(separator: "\n\n"))
+                        .font(.subheadline)
+                        .multilineTextAlignment(.center)
+                }
+                //should print out tokenized text
+                if !tokenizedText.isEmpty {
+                    ForEach(tokenizedText, id: \.self) { token in
+                        Text(token)
+                            .font(.subheadline)
+                    }
+                }
+                
             }
+            .padding()
         }
-        .padding()
     }
 
     func analyzeText() {
@@ -75,9 +88,11 @@ struct ContentView: View {
     func tokenizeText() {
         let tokenizer = NLTokenizer(unit: .word)
         tokenizer.string = inputText
+        tokenizedText = []
         //itterates and prints out the tokenized string
         tokenizer.enumerateTokens(in: inputText.startIndex..<inputText.endIndex) { tokenRange, _ in
             print(inputText[tokenRange])
+            tokenizedText.append(String(inputText[tokenRange]))
             return true
         }
     }
