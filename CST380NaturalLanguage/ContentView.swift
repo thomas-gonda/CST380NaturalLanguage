@@ -10,6 +10,7 @@ import NaturalLanguage
 
 struct ContentView: View {
     @State private var inputText: String = "No habla español."
+    @State private var wordCount: Int = 0
     @State private var detectedLanguage: String = ""
     @State private var tokenizedText: [String] = []
 
@@ -36,6 +37,7 @@ struct ContentView: View {
                 Button("Analyze Text") {
                     analyzeText()
                     tokenizeText()
+                    wordCount = tokenizedText.count
                 }
                 .buttonStyle(.borderedProminent)
                 
@@ -50,12 +52,15 @@ struct ContentView: View {
                         .font(.subheadline)
                         .multilineTextAlignment(.center)
                 }
+                if wordCount > 0{
+                    Text("Word Count: \(wordCount)")
+                        .font(.headline)
+                }
                 //should print out tokenized text
                 if !tokenizedText.isEmpty {
-                    ForEach(tokenizedText, id: \.self) { token in
-                        Text(token)
-                            .font(.subheadline)
-                    }
+                    Text("Tokens: ")
+                        .font(.headline)
+                    Text(tokenizedText.joined(separator: " | "))
                 }
                 
             }
@@ -82,6 +87,7 @@ struct ContentView: View {
             detectedLanguage = "Dominant: \(name)\n\nTop Hypotheses:\n\(details)"
         } else {
             detectedLanguage = "Unable to detect language"
+               
         }
     }
     
