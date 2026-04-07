@@ -16,8 +16,6 @@ struct ContentView: View {
 
     var body: some View {
         ScrollView {
-            
-            
             VStack(alignment: .center, spacing: 16) {
                 Text("Natural Language Framework Demo")
                     .font(.largeTitle)
@@ -56,7 +54,7 @@ struct ContentView: View {
                     Text("Word Count: \(wordCount)")
                         .font(.headline)
                 }
-                //should print out tokenized text
+                // Should print out tokenized text
                 if !tokenizedText.isEmpty {
                     Text("Tokens: ")
                         .font(.headline)
@@ -69,6 +67,7 @@ struct ContentView: View {
     }
 
     func analyzeText() {
+        // Identifies the likeilhood of the language of the text.
         let recognizer = NLLanguageRecognizer()
         recognizer.processString(inputText)
 
@@ -78,6 +77,7 @@ struct ContentView: View {
             let hypotheses = recognizer.languageHypotheses(withMaximum: 3)
             let details = hypotheses
                 .sorted { $0.value > $1.value }
+                // sorts the hypothesis objects, each of which contains a guess for the language and the confidence percentage of that guess.
                 .map { (lang, confidence) in
                     let langName = Locale.current.localizedString(forIdentifier: lang.rawValue) ?? lang.rawValue
                     return "\(langName): \(Int(confidence * 100))%"
@@ -95,7 +95,7 @@ struct ContentView: View {
         let tokenizer = NLTokenizer(unit: .word)
         tokenizer.string = inputText
         tokenizedText = []
-        //itterates and prints out the tokenized string
+        // Iterates and prints out the tokenized string
         tokenizer.enumerateTokens(in: inputText.startIndex..<inputText.endIndex) { tokenRange, _ in
             print(inputText[tokenRange])
             tokenizedText.append(String(inputText[tokenRange]))
